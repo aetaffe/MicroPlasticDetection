@@ -15,14 +15,15 @@ class MicroPlasticDataset(Dataset):
         self.img_paths = []
         self.boxes = []
         self.labels = []
+        annotations_path = f'{data_dir}/annotations.csv'
 
         # Read annotations
-        with open(data_dir, 'r') as r:
+        with open(annotations_path, 'r') as r:
             reader = csv.reader(r)
             # Skip header
             next(reader)
             for row in reader:
-                self.img_paths.append(row[0])
+                self.img_paths.append(f'{data_dir}/{row[0]}')
                 # x1, y1, x2, y2
                 self.boxes.append([int(row[-4]), int(row[-3]), int(row[-2]), int(row[-1])])
                 self.labels.append(1)
@@ -45,8 +46,9 @@ class MicroPlasticDataset(Dataset):
 
 
 if __name__ == '__main__':
-    training_dataset = MicroPlasticDataset('data/train.csv')
-    validation_dataset = MicroPlasticDataset('data/val.csv')
+    data_dir = '/media/alex/1TBSSD/SSD/Microplastic_Dataset/'
+    training_dataset = MicroPlasticDataset(data_dir + 'train')
+    validation_dataset = MicroPlasticDataset(data_dir + 'val')
     train_dataloader = DataLoader(training_dataset, batch_size=2, shuffle=True)
     val_dataloader = DataLoader(validation_dataset, batch_size=2, shuffle=False)
 
