@@ -21,9 +21,10 @@ weights = FasterRCNN_ResNet50_FPN_V2_Weights.DEFAULT
 preprocess = weights.transforms()
 
 class MicroPlasticDataset(Dataset):
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, train=True):
         super().__init__()
         self.images = []
+        self.train = train
         annotations_path = f'{data_dir}/annotations.csv'
         data = {}
         # Read annotations
@@ -64,11 +65,15 @@ class MicroPlasticDataset(Dataset):
         # img = img_transforms(img)
 
         # Boxes: Shape -> [N, 4] with N = Number of Boxes
-        boxes = torch.tensor(boxes, dtype=torch.float32)
-        #boxes = tv_tensors.BoundingBoxes(boxes, format='xyxy', canvas_size=(img_width, img_height), dtype=torch.float32)
-        # Labels: Shape -> [N] with N = Number of Boxes
-        label = torch.tensor(labels, dtype=torch.int64)
-        #img, boxes = img_transforms(img, boxes)
+        if self.train:
+            boxes = tv_tensors.BoundingBoxes(boxes, format='xyxy', canvas_size=(img_width, img_height),
+                                             dtype=torch.float32)
+            # Labels: Shape -> [N] with N = Number of Boxes
+            label = torch.tensor(labels, dtype=torch.int64)
+            img, boxes = img_transforms(img, boxes)
+        else:
+            boxes = torch.tensor(boxes, dtype=torch.float32)
+
         return img, {'boxes': boxes, 'labels': label}
 
 
