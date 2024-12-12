@@ -186,7 +186,7 @@ def bb_intersection_over_union(boxA, boxB):
 def objective(trial):
     data_dir = '/media/alex/1TBSSD/SSD/Microplastic_Dataset/'
     training_dataset = MicroPlasticDataset(data_dir + 'train')
-    validation_dataset = MicroPlasticDataset(data_dir + 'val')
+    validation_dataset = MicroPlasticDataset(data_dir + 'val', train=False)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     train_dataloader = DataLoader(training_dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
