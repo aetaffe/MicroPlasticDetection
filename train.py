@@ -68,12 +68,12 @@ class MicroPlasticDataset(Dataset):
         if self.train:
             boxes = tv_tensors.BoundingBoxes(boxes, format='xyxy', canvas_size=(img_width, img_height),
                                              dtype=torch.float32)
-            # Labels: Shape -> [N] with N = Number of Boxes
-            label = torch.tensor(labels, dtype=torch.int64)
             img, boxes = img_transforms(img, boxes)
         else:
             boxes = torch.tensor(boxes, dtype=torch.float32)
 
+        # Labels: Shape -> [N] with N = Number of Boxes
+        label = torch.tensor(labels, dtype=torch.int64)
         return img, {'boxes': boxes, 'labels': label}
 
 
