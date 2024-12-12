@@ -15,7 +15,7 @@ from PIL import Image
 from torchvision.transforms import v2
 from torchvision import tv_tensors
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_V2_Weights
-import torch.nn.Functional as F
+from torchvision.transforms import functional as F
 
 weights = FasterRCNN_ResNet50_FPN_V2_Weights.DEFAULT
 preprocess = weights.transforms()
@@ -52,6 +52,7 @@ class MicroPlasticDataset(Dataset):
         # img /= 255.0
         # img = torch.from_numpy(img).permute(2, 0, 1)
         img = Image.open(img_path).convert('RGB')
+        img_width, img_height = img.size
         # img = preprocess(img)
         img = F.pil_to_tensor(img)
         img = F.convert_image_dtype(img, torch.float32)
@@ -63,11 +64,11 @@ class MicroPlasticDataset(Dataset):
         # img = img_transforms(img)
 
         # Boxes: Shape -> [N, 4] with N = Number of Boxes
-        # boxes = torch.tensor(boxes, dtype=torch.float32)
-        boxes = tv_tensors.BoundingBoxes(boxes, format='xyxy', canvas_size=(img.width, img.height), dtype=torch.float32)
+        boxes = torch.tensor(boxes, dtype=torch.float32)
+        #boxes = tv_tensors.BoundingBoxes(boxes, format='xyxy', canvas_size=(img_width, img_height), dtype=torch.float32)
         # Labels: Shape -> [N] with N = Number of Boxes
         label = torch.tensor(labels, dtype=torch.int64)
-        img, boxes = img_transforms(img, boxes)
+        #img, boxes = img_transforms(img, boxes)
         return img, {'boxes': boxes, 'labels': label}
 
 
